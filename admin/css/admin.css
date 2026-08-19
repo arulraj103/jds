@@ -448,3 +448,137 @@ button { font-family: var(--font-body); }
   color: #9c9ca0;
   font-weight: 500;
 }
+
+/* ================================================================
+   Transaction status badges (payment-level status)
+   ================================================================ */
+.txn-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.txn-badge-paid     { background: rgba(46,163,89,0.12);  color: #1f7a3d; }
+.txn-badge-pending  { background: rgba(184,140,20,0.12); color: #9c6f00; }
+.txn-badge-failed   { background: rgba(227,30,36,0.10);  color: #b8151a; }
+.txn-badge-refunded { background: rgba(13,13,13,0.08);   color: #55575c; }
+
+/* ================================================================
+   Year selector — income page
+   ================================================================ */
+.income-year-select {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 7px 32px 7px 12px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid rgba(13,13,13,0.15);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a8a8d' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+.income-year-select:focus { outline: none; border-color: var(--red); }
+
+/* ================================================================
+   Monthly revenue chart
+   ================================================================ */
+.monthly-chart-wrap {
+  width: 100%;
+  margin-bottom: 28px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--ivory);
+  padding: 20px 16px 12px;
+}
+
+/* ================================================================
+   Yearly summary strip
+   ================================================================ */
+.yearly-summary {
+  background: var(--black);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  margin-bottom: 28px;
+  color: var(--white);
+}
+.yearly-summary-title {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #9c9ca0;
+  margin-bottom: 16px;
+}
+.yearly-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+}
+@media (min-width: 700px) {
+  .yearly-summary-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.yearly-summary-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8a8a8d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+.yearly-summary-val {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================================
+   Monthly revenue grid (12-month list)
+   ================================================================ */
+.monthly-revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2px;
+}
+@media (min-width: 560px) {
+  .monthly-revenue-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 900px) {
+  .monthly-revenue-grid { grid-template-columns: repeat(4, 1fr); }
+}
+.monthly-rev-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 14px;
+  background: var(--ivory);
+  border-radius: var(--radius-sm);
+  gap: 8px;
+}
+.monthly-rev-month {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #55575c;
+  white-space: nowrap;
+}
+.monthly-rev-amount {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.monthly-rev-has-value { color: var(--black); }
+.monthly-rev-zero      { color: #c5c5c8; }
