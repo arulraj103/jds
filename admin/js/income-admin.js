@@ -103,7 +103,6 @@ async function fetchAllSubscriptions() {
       created_at,
       status,
       vehicle_model,
-      payment_method,
       plans ( tier_name, ${PRICE_COLUMN} ),
       clients ( full_name )
     `)
