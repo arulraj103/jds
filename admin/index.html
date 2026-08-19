@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — Admin — Just Detail</title>
+<title>Income — Admin — Just Detail</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -13,116 +13,100 @@
 
 <div class="admin-shell" id="adminShell">
   <main class="admin-main">
-    <div id="pageLoading" class="admin-loading">Loading dashboard…</div>
+    <div id="pageLoading" class="admin-loading">Loading income data…</div>
 
     <div id="pageContent" style="display:none;">
+
       <div class="admin-page-header">
-        <h1>Dashboard</h1>
-        <p>Here's what needs your attention today.</p>
+        <h1>Income</h1>
+        <p>Revenue from active and completed maintenance plans.</p>
       </div>
 
-      <div class="admin-cards">
-        <div class="admin-card">
-          <div class="admin-card-label">Active Clients</div>
-          <div class="admin-card-num" id="cardActiveClients">—</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-label">Pending Requests</div>
-          <div class="admin-card-num accent" id="cardPendingRequests">—</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-label">Today's Bookings</div>
-          <div class="admin-card-num" id="cardTodayBookings">—</div>
-        </div>
-        <div class="admin-card">
-          <div class="admin-card-label">Upcoming Bookings</div>
-          <div class="admin-card-num" id="cardUpcomingBookings">—</div>
+      <!-- Error state -->
+      <div id="incomeError" class="admin-panel" style="display:none;">
+        <div class="admin-panel-empty">
+          Failed to load income data. Please refresh the page or check your connection.
         </div>
       </div>
 
-      <!-- ── Income Summary Cards ── -->
+      <!-- ── Headline income cards ── -->
       <div class="admin-section-label">Revenue Overview</div>
       <div class="admin-cards admin-cards-income">
+
         <div class="admin-card admin-card-income">
           <div class="admin-card-income-icon">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v10M9.5 9.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5S13.4 12 12 12s-2.5 1.1-2.5 2.5S10.6 17 12 17s2.5-1.1 2.5-2.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 7v10M9.5 9.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5S13.4 12 12 12s-2.5 1.1-2.5 2.5S10.6 17 12 17s2.5-1.1 2.5-2.5"
+                    stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
           </div>
           <div class="admin-card-income-body">
             <div class="admin-card-label">Today's Income</div>
-            <div class="admin-card-num admin-card-income-num" id="cardIncomeToday">—</div>
+            <div class="admin-card-num admin-card-income-num" id="incomeTodayVal">—</div>
+            <div class="admin-card-income-sub">Plans activated today</div>
           </div>
         </div>
+
         <div class="admin-card admin-card-income">
           <div class="admin-card-income-icon">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3" y="5" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
           </div>
           <div class="admin-card-income-body">
             <div class="admin-card-label">This Month</div>
-            <div class="admin-card-num admin-card-income-num" id="cardIncomeMonth">—</div>
+            <div class="admin-card-num admin-card-income-num" id="incomeMonthVal">—</div>
+            <div class="admin-card-income-sub">Plans activated this month</div>
           </div>
         </div>
+
         <div class="admin-card admin-card-income">
           <div class="admin-card-income-icon">
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"
+                    stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
           <div class="admin-card-income-body">
             <div class="admin-card-label">Total Income</div>
-            <div class="admin-card-num admin-card-income-num" id="cardIncomeTotal">—</div>
+            <div class="admin-card-num admin-card-income-num" id="incomeTotalVal">—</div>
+            <div class="admin-card-income-sub">All time — active &amp; completed plans</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Breakdown table ── -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2>Plan Revenue Breakdown</h2>
+          <span class="admin-panel-note">Active and completed subscriptions only</span>
+        </div>
+        <div class="admin-panel-body">
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="incomeTable">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Vehicle</th>
+                  <th>Plan</th>
+                  <th>Date Activated</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="incomeBody"></tbody>
+            </table>
+          </div>
+          <div id="incomeEmpty" class="admin-panel-empty" style="display:none;">
+            No paid subscriptions found.
           </div>
         </div>
       </div>
 
-      <div class="admin-panel">
-        <div class="admin-panel-header">
-          <h2>Pending Visit Requests</h2>
-        </div>
-        <div class="admin-panel-body">
-          <div class="admin-table-wrap">
-            <table class="admin-table" id="pendingVisitsTable">
-              <thead>
-                <tr><th>Customer</th><th>Vehicle</th><th>Requested Date</th><th>Requested Time</th><th>Actions</th></tr>
-              </thead>
-              <tbody id="pendingVisitsBody"></tbody>
-            </table>
-          </div>
-          <div id="pendingVisitsEmpty" class="admin-panel-empty" style="display:none;">No pending visit requests.</div>
-        </div>
-      </div>
-
-      <div class="admin-panel">
-        <div class="admin-panel-header">
-          <h2>Today's Bookings</h2>
-        </div>
-        <div class="admin-panel-body">
-          <div class="admin-table-wrap">
-            <table class="admin-table" id="todayBookingsTable">
-              <thead>
-                <tr><th>Time</th><th>Customer</th><th>Vehicle</th><th>Service</th><th>Status</th></tr>
-              </thead>
-              <tbody id="todayBookingsBody"></tbody>
-            </table>
-          </div>
-          <div id="todayBookingsEmpty" class="admin-panel-empty" style="display:none;">No bookings scheduled for today.</div>
-        </div>
-      </div>
-
-      <div class="admin-panel">
-        <div class="admin-panel-header">
-          <h2>Pending Maintenance Requests</h2>
-        </div>
-        <div class="admin-panel-body">
-          <div class="admin-table-wrap">
-            <table class="admin-table" id="pendingTable">
-              <thead>
-                <tr><th>Customer</th><th>Vehicle</th><th>Plan</th><th>Requested</th><th>Actions</th></tr>
-              </thead>
-              <tbody id="pendingBody"></tbody>
-            </table>
-          </div>
-          <div id="pendingEmpty" class="admin-panel-empty" style="display:none;">No pending requests right now.</div>
-        </div>
-      </div>
-    </div>
+    </div><!-- /pageContent -->
   </main>
 </div>
 
@@ -130,7 +114,9 @@
 <script src="../js/config.js"></script>
 <script src="js/admin-auth.js"></script>
 <script src="js/admin-common.js"></script>
-<script src="js/dashboard-admin.js"></script>
 <script src="js/income-admin.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', initIncomePage);
+</script>
 </body>
 </html>
