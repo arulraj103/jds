@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookings — Admin — Just Detail</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+<div class="admin-shell" id="adminShell">
+  <main class="admin-main">
+    <div id="pageLoading" class="admin-loading">Loading bookings…</div>
+
+    <div id="pageContent" style="display:none;">
+      <div class="admin-page-header">
+        <h1>Bookings</h1>
+        <p>All maintenance plan visit requests.</p>
+      </div>
+
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <div class="admin-filters" id="statusFilters">
+            <button class="filter-chip active" data-filter="today">Today</button>
+            <button class="filter-chip" data-filter="upcoming">Upcoming</button>
+            <button class="filter-chip" data-filter="completed">Completed</button>
+            <button class="filter-chip" data-filter="cancelled">Cancelled</button>
+          </div>
+        </div>
+        <div class="admin-panel-body">
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="bookingsTable">
+              <thead>
+                <tr><th>Customer</th><th>Vehicle</th><th>Date</th><th>Time</th><th>Service</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="bookingsBody"></tbody>
+            </table>
+          </div>
+          <div id="bookingsEmpty" class="admin-panel-empty" style="display:none;">No bookings in this view.</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="js/admin-auth.js"></script>
+<script src="js/admin-common.js"></script>
+<script src="js/bookings-admin.js"></script>
+</body>
+</html>
