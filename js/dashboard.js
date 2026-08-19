@@ -14,16 +14,39 @@ async function init() {
   document.getElementById('logoutBtn').addEventListener('click', signOutClient);
 
   // Load (or create-on-first-login) the client's profile row
-  const { data: clientRow, error: clientErr } = await supabaseClient
-    .from('clients')
-    .select('*')
-    .eq('id', currentUser.id)
-    .maybeSingle();
+  let { data: clientRow, error: clientErr } = await supabaseClient
+  .from('clients')
+  .select('*')
+  .eq('id', currentUser.id)
+  .maybeSingle();
 
-  if (clientErr) {
-    console.error('Failed to load client profile:', clientErr);
+if (clientErr) {
+  console.error('Failed to load client profile:', clientErr);
+}
+
+// Create the client row if it doesn't exist
+if (!clientRow) {
+  const { data: newClient, error: createClientError } = await supabaseClient
+    .from('clients')
+    .insert({
+      id: currentUser.id,
+      full_name: currentUser.user_metadata?.full_name || 'Customer',
+      phone: currentUser.user_metadata?.phone || '',
+      email: currentUser.email
+    })
+    .select('*')
+    .single();
+
+  if (createClientError) {
+    console.error('Failed to create client profile:', createClientError);
+    alert('Your customer profile could not be created. Please contact the administrator.');
+    return;
   }
-  currentClientRow = clientRow;
+
+  clientRow = newClient;
+}
+
+currentClientRow = clientRow;
 
   if (currentClientRow) {
     document.getElementById('dashUserName').textContent = currentClientRow.full_name;
