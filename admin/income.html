@@ -78,7 +78,88 @@
 
       </div>
 
-      <!-- ── Breakdown table ── -->
+      <!-- ── Recent Transactions ── -->
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2>Recent Transactions</h2>
+          <div class="admin-filters" id="txnFilters">
+            <button class="filter-chip active" data-status="all">All</button>
+            <button class="filter-chip" data-status="paid">Paid</button>
+            <button class="filter-chip" data-status="pending">Pending</button>
+            <button class="filter-chip" data-status="failed">Failed</button>
+            <button class="filter-chip" data-status="refunded">Refunded</button>
+          </div>
+        </div>
+        <div class="admin-panel-body">
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="txnTable">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Plan</th>
+                  <th>Amount</th>
+                  <th>Payment Method</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="txnBody"></tbody>
+            </table>
+          </div>
+          <div id="txnEmpty" class="admin-panel-empty" style="display:none;">
+            No transactions found.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Monthly Revenue ── -->
+      <div class="admin-section-label" style="margin-top:8px;">Monthly Revenue</div>
+
+      <div class="admin-panel">
+        <div class="admin-panel-header">
+          <h2 id="monthlyRevenueTitle">Monthly Revenue</h2>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <label for="yearSelect" style="font-size:0.82rem;font-weight:600;color:#8a8a8d;">Year:</label>
+            <select id="yearSelect" class="income-year-select"></select>
+          </div>
+        </div>
+        <div class="admin-panel-body" style="padding:22px;">
+
+          <!-- Chart -->
+          <div class="monthly-chart-wrap">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+
+          <!-- Yearly Summary -->
+          <div class="yearly-summary" id="yearlySummary">
+            <div class="yearly-summary-title" id="yearlySummaryTitle">2026 Summary</div>
+            <div class="yearly-summary-grid">
+              <div class="yearly-summary-item">
+                <div class="yearly-summary-label">Total Revenue</div>
+                <div class="yearly-summary-val" id="summaryTotal">—</div>
+              </div>
+              <div class="yearly-summary-item">
+                <div class="yearly-summary-label">Best Month</div>
+                <div class="yearly-summary-val" id="summaryBestMonth">—</div>
+              </div>
+              <div class="yearly-summary-item">
+                <div class="yearly-summary-label">Best Month Revenue</div>
+                <div class="yearly-summary-val" id="summaryBestRevenue">—</div>
+              </div>
+              <div class="yearly-summary-item">
+                <div class="yearly-summary-label">Avg Monthly Revenue</div>
+                <div class="yearly-summary-val" id="summaryAvg">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Monthly table -->
+          <div class="monthly-revenue-grid" id="monthlyRevenueGrid"></div>
+
+        </div>
+      </div>
+
+      <!-- ── Plan Revenue Breakdown ── -->
       <div class="admin-panel">
         <div class="admin-panel-header">
           <h2>Plan Revenue Breakdown</h2>
@@ -111,6 +192,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="../js/config.js"></script>
 <script src="js/admin-auth.js"></script>
 <script src="js/admin-common.js"></script>
