@@ -398,8 +398,8 @@ async function sendBookingToWhatsapp() {
         addons: data.addons,
         
         
-        booking_date: data.date,
-        booking_time: data.time,
+        requested_date: selectedDate.toISOString().split('T')[0],
+        requested_time: selectedTime,
         notes: data.notes || null,
 
         amount:amount,
