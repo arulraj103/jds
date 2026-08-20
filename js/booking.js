@@ -395,7 +395,7 @@ async function sendBookingToWhatsapp() {
         seat_material: data.seatMaterial,
 
         service: data.service,
-        addons: data.addons,
+        addons: data.addons.join(', '),
         
         
         requested_date: selectedDate.toISOString().split('T')[0],
