@@ -446,7 +446,7 @@ Status: Pending`;
   const encoded = encodeURIComponent(message);
 
   const waUrl =
-    `https://wa.me/${9629885790}?text=${encoded}`;
+    `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encoded}`;
 
   window.open(waUrl, '_blank');
 }
