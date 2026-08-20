@@ -65,8 +65,15 @@ function renderBookingsTable(data, error) {
   emptyEl.style.display = 'none';
 
   tbody.innerHTML = data.map(b => {
-    const customerName = b.subscriptions?.clients?.full_name || '—';
-    const vehicle = b.subscriptions?.vehicle_model || '—';
+    const customerName =
+  b.customer_name ||
+  b.subscriptions?.clients?.full_name ||
+  '—';
+
+const vehicle =
+  b.vehicle_model ||
+  b.subscriptions?.vehicle_model ||
+  '—';
     return `
       <tr>
         <td>${customerName}</td>
@@ -124,7 +131,37 @@ function wireUpActions() {
 async function updateBookingStatus(bookingId, newStatus, btnEl, note) {
   btnEl.disabled = true;
 
-  const updatePayload = { status: newStatus };
+  const updatePayload = {
+  status: newStatus
+};
+
+// Only guest bookings become income when approved
+if (newStatus === 'confirmed') {
+  const { data: booking, error: bookingError } = await supabaseClient
+    .from('bookings')
+    .select('booking_type, amount')
+    .eq('id', bookingId)
+    .single();
+
+  if (bookingError) {
+    showToast(
+      'Failed to check booking: ' + bookingError.message,
+      'error'
+    );
+
+    btnEl.disabled = false;
+    return;
+  }
+
+  if (booking.booking_type === 'guest') {
+    updatePayload.payment_status = 'paid';
+    updatePayload.approved_at = new Date().toISOString();
+  }
+}
+
+if (note) {
+  updatePayload.admin_note = note;
+}
   if (note) updatePayload.admin_note = note;
 
   // The DB trigger (handle_booking_completion) automatically adjusts the
