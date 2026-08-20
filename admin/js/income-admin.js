@@ -115,6 +115,81 @@ async function fetchAllSubscriptions() {
   return { rows: data || [], error: null };
 }
 
+async function fetchPaidGuestBookings() {
+  const { data, error } = await supabaseClient
+    .from('bookings')
+    .select(`
+      id,
+      customer_name,
+      service,
+      amount,
+      approved_at,
+      created_at,
+      payment_status,
+      booking_type
+    `)
+    .eq('booking_type', 'guest')
+    .eq('payment_status', 'paid');
+
+  if (error) {
+    console.error(
+      '[Income] Failed to fetch guest bookings:',
+      error
+    );
+
+    return {
+      rows: [],
+      error
+    };
+  }
+
+  return {
+    rows: data || [],
+    error: null
+  };
+}
+function computeGuestIncomeMetrics(rows) {
+  const todayStr = todayLocalStr();
+  const monthStr = firstOfMonthStr();
+
+  const getDate = row =>
+    (row.approved_at || row.created_at || '').slice(0, 10);
+
+  const totalIncome = rows.reduce(
+    (total, row) =>
+      total + Number(row.amount || 0),
+    0
+  );
+
+  const todayIncome = rows
+    .filter(row => getDate(row) === todayStr)
+    .reduce(
+      (total, row) =>
+        total + Number(row.amount || 0),
+      0
+    );
+
+  const monthlyIncome = rows
+    .filter(row => {
+      const date = getDate(row);
+
+      return (
+        date >= monthStr &&
+        date <= todayStr
+      );
+    })
+    .reduce(
+      (total, row) =>
+        total + Number(row.amount || 0),
+      0
+    );
+
+  return {
+    todayIncome,
+    monthlyIncome,
+    totalIncome
+  };
+}
 /**
  * From all rows, compute income metrics using only paid statuses.
  */
@@ -174,23 +249,72 @@ function extractYears(allRows) {
 // ── Dashboard card updater ─────────────────────────────────────────────────
 
 async function loadDashboardIncomeCards() {
-  const todayEl  = document.getElementById('cardIncomeToday');
-  const monthEl  = document.getElementById('cardIncomeMonth');
-  const totalEl  = document.getElementById('cardIncomeTotal');
+  const todayEl =
+    document.getElementById('cardIncomeToday');
+
+  const monthEl =
+    document.getElementById('cardIncomeMonth');
+
+  const totalEl =
+    document.getElementById('cardIncomeTotal');
+
   if (!todayEl && !monthEl && !totalEl) return;
 
-  const { rows, error } = await fetchAllSubscriptions();
-  if (error) {
+  // Membership income
+  const subscriptionResult =
+    await fetchAllSubscriptions();
+
+  // Guest booking income
+  const guestResult =
+    await fetchPaidGuestBookings();
+
+  if (
+    subscriptionResult.error ||
+    guestResult.error
+  ) {
     if (todayEl) todayEl.textContent = 'Error';
     if (monthEl) monthEl.textContent = 'Error';
     if (totalEl) totalEl.textContent = 'Error';
+
     return;
   }
 
-  const { todayIncome, monthlyIncome, totalIncome } = computeIncomeMetrics(rows);
-  if (todayEl) todayEl.textContent = formatINR(todayIncome);
-  if (monthEl) monthEl.textContent = formatINR(monthlyIncome);
-  if (totalEl) totalEl.textContent = formatINR(totalIncome);
+  const membershipIncome =
+    computeIncomeMetrics(
+      subscriptionResult.rows
+    );
+
+  const guestIncome =
+    computeGuestIncomeMetrics(
+      guestResult.rows
+    );
+
+  const todayIncome =
+    membershipIncome.todayIncome +
+    guestIncome.todayIncome;
+
+  const monthlyIncome =
+    membershipIncome.monthlyIncome +
+    guestIncome.monthlyIncome;
+
+  const totalIncome =
+    membershipIncome.totalIncome +
+    guestIncome.totalIncome;
+
+  if (todayEl) {
+    todayEl.textContent =
+      formatINR(todayIncome);
+  }
+
+  if (monthEl) {
+    monthEl.textContent =
+      formatINR(monthlyIncome);
+  }
+
+  if (totalEl) {
+    totalEl.textContent =
+      formatINR(totalIncome);
+  }
 }
 
 // ── Chart instance ─────────────────────────────────────────────────────────
