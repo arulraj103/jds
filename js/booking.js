@@ -336,16 +336,67 @@ function renderReview() {
   });
 }
 
-function sendBookingToWhatsapp() {
-  if (!validateStep(1)) { goToStep(1); return; }
-  if (!validateStep(2)) { goToStep(2); return; }
+async function sendBookingToWhatsapp() {
+  if (!validateStep(1)) {
+    goToStep(1);
+    return;
+  }
+
+  if (!validateStep(2)) {
+    goToStep(2);
+    return;
+  }
+
   const data = getFormData();
 
+  // 1. SAVE BOOKING TO SUPABASE FIRST
+  const { data: savedBooking, error } = await supabaseClient
+    .from('bookings')
+    .insert([
+      {
+        customer_name: data.name,
+        phone: data.phone,
+        address: data.address,
+        area: data.area,
+        landmark: data.landmark || null,
+
+        vehicle_type: data.vehicleType,
+        vehicle_model: data.vehicleModel,
+        seat_material: data.seatMaterial,
+
+        service: data.service,
+        addons: data.addons,
+
+        booking_date: data.date,
+        booking_time: data.time,
+        notes: data.notes || null,
+
+        status: 'pending',
+        payment_status: 'pending',
+        booking_type: 'guest'
+      }
+    ])
+    .select()
+    .single();
+
+  // STOP IF DATABASE SAVE FAILED
+  if (error) {
+    console.error('Booking save error:', error);
+    alert('Booking could not be saved. Please try again.');
+    return;
+  }
+
+  console.log('Booking saved:', savedBooking);
+
+  // 2. CREATE WHATSAPP MESSAGE
   const message =
 `New Booking Request — Just Detail
 
+Booking ID: ${savedBooking.id}
+
 Name: ${data.name}
 Phone: ${data.phone}
+
 Address: ${data.address}, ${data.area}${data.landmark ? ' (near ' + data.landmark + ')' : ''}
 
 Vehicle: ${data.vehicleType} — ${data.vehicleModel}
@@ -355,9 +406,15 @@ Add-ons: ${data.addons.length ? data.addons.join(', ') : 'None'}
 
 Preferred Date: ${data.date}
 Preferred Time: ${data.time}
-Notes: ${data.notes || '—'}`;
+Notes: ${data.notes || '—'}
 
+Status: Pending`;
+
+  // 3. OPEN WHATSAPP ONLY AFTER SAVING
   const encoded = encodeURIComponent(message);
-  const waUrl = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encoded}`;
+
+  const waUrl =
+    `https://wa.me/${9629885790}?text=${encoded}`;
+
   window.open(waUrl, '_blank');
 }
