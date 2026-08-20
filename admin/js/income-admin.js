@@ -123,7 +123,6 @@ async function fetchPaidGuestBookings() {
       customer_name,
       service,
       amount,
-      approved_at,
       created_at,
       payment_status,
       booking_type
@@ -132,10 +131,7 @@ async function fetchPaidGuestBookings() {
     .eq('payment_status', 'paid');
 
   if (error) {
-    console.error(
-      '[Income] Failed to fetch guest bookings:',
-      error
-    );
+    console.error('[Income] Failed to fetch guest bookings:', error);
 
     return {
       rows: [],
@@ -148,12 +144,13 @@ async function fetchPaidGuestBookings() {
     error: null
   };
 }
+
 function computeGuestIncomeMetrics(rows) {
   const todayStr = todayLocalStr();
   const monthStr = firstOfMonthStr();
 
   const getDate = row =>
-    (row.approved_at || row.created_at || '').slice(0, 10);
+    (row.created_at || '').slice(0, 10);
 
   const totalIncome = rows.reduce(
     (total, row) =>
