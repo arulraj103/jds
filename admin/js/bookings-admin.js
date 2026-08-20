@@ -132,20 +132,47 @@ async function updateBookingStatus(bookingId, newStatus, btnEl, note) {
   btnEl.disabled = true;
 
   const updatePayload = {
-  status: newStatus
-};
+    status: newStatus
+  };
 
-// Only guest bookings become income when approved
-if (newStatus === 'confirmed') {
-  const { data: booking, error: bookingError } = await supabaseClient
+  // When admin confirms a guest booking,
+  // mark payment as paid so it appears in Income.
+  if (newStatus === 'confirmed') {
+    const { data: booking, error: bookingError } = await supabaseClient
+      .from('bookings')
+      .select('booking_type, amount')
+      .eq('id', bookingId)
+      .single();
+
+    if (bookingError) {
+      showToast(
+        'Failed to check booking: ' + bookingError.message,
+        'error'
+      );
+
+      btnEl.disabled = false;
+      return;
+    }
+
+    if (booking.booking_type === 'guest') {
+      updatePayload.payment_status = 'paid';
+      updatePayload.approved_at = new Date().toISOString();
+    }
+  }
+
+  // Add admin note only if provided
+  if (note) {
+    updatePayload.admin_note = note;
+  }
+
+  const { error } = await supabaseClient
     .from('bookings')
-    .select('booking_type, amount')
-    .eq('id', bookingId)
-    .single();
+    .update(updatePayload)
+    .eq('id', bookingId);
 
-  if (bookingError) {
+  if (error) {
     showToast(
-      'Failed to check booking: ' + bookingError.message,
+      'Failed to update booking: ' + error.message,
       'error'
     );
 
@@ -153,37 +180,15 @@ if (newStatus === 'confirmed') {
     return;
   }
 
-  if (booking.booking_type === 'guest') {
-    updatePayload.payment_status = 'paid';
-    updatePayload.approved_at = new Date().toISOString();
-  }
-}
-
-if (note) {
-  updatePayload.admin_note = note;
-}
-  if (note) updatePayload.admin_note = note;
-
-  // The DB trigger (handle_booking_completion) automatically adjusts the
-  // linked subscription's washes_used/washes_remaining when status becomes
-  // 'completed' — no manual wash-count logic needed here.
-  const { error } = await supabaseClient
-    .from('bookings')
-    .update(updatePayload)
-    .eq('id', bookingId);
-
-  if (error) {
-    showToast('Failed to update booking: ' + error.message, 'error');
-    btnEl.disabled = false;
-    return;
-  }
-
   const messages = {
     confirmed: 'Booking confirmed.',
     cancelled: 'Booking cancelled.',
-    completed: 'Marked as completed — wash count updated.',
+    completed: 'Marked as completed — wash count updated.'
   };
-  showToast(messages[newStatus] || 'Booking updated.');
+
+  showToast(
+    messages[newStatus] || 'Booking updated.'
+  );
 
   await loadBookings();
 }
