@@ -336,6 +336,36 @@ function renderReview() {
   });
 }
 
+function getBookingAmount() {
+  const selectedService = document.getElementById('mService');
+
+  // Get service price from the selected option
+  let total = Number(
+    selectedService.options[selectedService.selectedIndex]?.dataset.price || 0
+  );
+
+  // Add selected add-on prices
+  const isSuv =
+    document.getElementById('mVehicleType').value ===
+    'SUV / MPV / Large SUV';
+
+  document
+    .querySelectorAll('input[name="addon"]:checked')
+    .forEach(addon => {
+      let price = addon.dataset.price;
+
+      if (addon.dataset.priceSedan) {
+        price = isSuv
+          ? addon.dataset.priceSuv
+          : addon.dataset.priceSedan;
+      }
+
+      total += Number(price || 0);
+    });
+
+  return total;
+}
+
 async function sendBookingToWhatsapp() {
   if (!validateStep(1)) {
     goToStep(1);
@@ -348,7 +378,7 @@ async function sendBookingToWhatsapp() {
   }
 
   const data = getFormData();
-
+  const amount = getBookingAmount();
   // 1. SAVE BOOKING TO SUPABASE FIRST
   const { data: savedBooking, error } = await supabaseClient
     .from('bookings')
@@ -366,11 +396,13 @@ async function sendBookingToWhatsapp() {
 
         service: data.service,
         addons: data.addons,
-
+        Amount: amount.toLocaleString('en-IN')
+        
         booking_date: data.date,
         booking_time: data.time,
         notes: data.notes || null,
 
+        amount:amount,
         status: 'pending',
         payment_status: 'pending',
         booking_type: 'guest'
