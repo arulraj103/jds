@@ -120,22 +120,23 @@ async function fetchPaidGuestBookings() {
     .from('bookings')
     .select(`
       id,
-      customer_name,
-      service,
       amount,
       created_at,
-      payment_status,
-      booking_type
+      status
     `)
-    .eq('booking_type', 'guest')
-    .eq('payment_status', 'paid');
+    .not('amount', 'is', null)
+    .in('status', ['confirmed', 'completed']);
 
   if (error) {
-    console.error('[Income] Failed to fetch guest bookings:', error);
+    console.error(
+      '[Income] Failed to fetch guest bookings:',
+      error
+    );
 
+    // Do not break the entire dashboard
     return {
       rows: [],
-      error
+      error: null
     };
   }
 
