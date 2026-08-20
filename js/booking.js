@@ -396,7 +396,7 @@ async function sendBookingToWhatsapp() {
 
         service: data.service,
         addons: data.addons,
-        Amount: amount.toLocaleString('en-IN')
+        
         
         booking_date: data.date,
         booking_time: data.time,
