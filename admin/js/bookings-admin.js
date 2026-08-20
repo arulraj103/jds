@@ -128,39 +128,18 @@ function wireUpActions() {
   });
 }
 
-async function updateBookingStatus(bookingId, newStatus, btnEl, note) {
+async function updateBookingStatus(
+  bookingId,
+  newStatus,
+  btnEl,
+  note
+) {
   btnEl.disabled = true;
 
   const updatePayload = {
     status: newStatus
   };
 
-  // When admin confirms a guest booking,
-  // mark payment as paid so it appears in Income.
-  if (newStatus === 'confirmed') {
-    const { data: booking, error: bookingError } = await supabaseClient
-      .from('bookings')
-      .select('booking_type, amount')
-      .eq('id', bookingId)
-      .single();
-
-    if (bookingError) {
-      showToast(
-        'Failed to check booking: ' + bookingError.message,
-        'error'
-      );
-
-      btnEl.disabled = false;
-      return;
-    }
-
-    if (booking.booking_type === 'guest') {
-      updatePayload.payment_status = 'paid';
-      updatePayload.approved_at = new Date().toISOString();
-    }
-  }
-
-  // Add admin note only if provided
   if (note) {
     updatePayload.admin_note = note;
   }
@@ -183,7 +162,7 @@ async function updateBookingStatus(bookingId, newStatus, btnEl, note) {
   const messages = {
     confirmed: 'Booking confirmed.',
     cancelled: 'Booking cancelled.',
-    completed: 'Marked as completed — wash count updated.'
+    completed: 'Marked as completed.'
   };
 
   showToast(
